@@ -1,3 +1,5 @@
 export interface PresetGeneratorSchema {
-  name: string;
+  brand: string;
+  nodeVersion: string;
+  packageManager: string;
 }

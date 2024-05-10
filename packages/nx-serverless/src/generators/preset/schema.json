@@ -4,15 +4,31 @@
   "title": "",
   "type": "object",
   "properties": {
-    "name": {
+    "brand": {
       "type": "string",
       "description": "",
       "$default": {
         "$source": "argv",
         "index": 0
       },
-      "x-prompt": "What name would you like to use?"
+      "x-prompt": "What brand would you like to bootstrapping this workspace for?"
+    },
+    "nodeVersion": {
+      "type": "string",
+      "description": "Target Node.js version",
+      "$default": {
+        "$source": "argv",
+        "index": 1
+      }
+    },
+    "packageManager": {
+      "type": "string",
+      "description": "Target package manager",
+      "$default": {
+        "$source": "argv",
+        "index": 2
+      }
     }
   },
-  "required": ["name"]
+  "required": ["brand"]
 }
