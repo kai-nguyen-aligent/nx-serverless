@@ -2,8 +2,9 @@
   "name": "create-nx-serverless",
   "version": "0.0.1",
   "dependencies": {
+    "@clack/prompts": "^0.7.0",
     "create-nx-workspace": "19.0.2",
-    "@clack/prompts": "0.7.0"
+    "yargs": "^17.7.2"
   },
   "type": "commonjs",
   "main": "./src/index.js",

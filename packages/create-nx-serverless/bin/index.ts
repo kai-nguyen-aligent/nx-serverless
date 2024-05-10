@@ -1,80 +1,78 @@
 #!/usr/bin/env node
 
-import { intro, outro, select, text } from '@clack/prompts';
+import { intro, outro, text } from '@clack/prompts';
 import type { CreateWorkspaceOptions } from 'create-nx-workspace';
 import { createWorkspace } from 'create-nx-workspace';
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
+
+const DEFAULT_NODE_VERSION = '20.13.1';
+const DEFAULT_PACKAGE_MANAGER = 'npm';
 
 async function main() {
   // TODO: add more meaningful intro
   intro('nx-serverless workspace generator');
+  const argv = await yargs(hideBin(process.argv))
+    .options({
+      name: { type: 'string', alias: 'n', demandOption: true },
+      brand: { type: 'string', alias: 'b', demandOption: true },
+      'node-version': { type: 'string', default: DEFAULT_NODE_VERSION },
+      'package-manager': { type: 'string', default: DEFAULT_PACKAGE_MANAGER },
+    })
+    .parse();
 
-  let brand = process.argv[2]; // TODO: use libraries like yargs or enquirer to set your workspace name
+  console.log(argv);
+
+  let name = argv.name;
+  if (!name) {
+    name = (await text({
+      message: 'What is the name of your workspace?',
+      initialValue: 'workspace-name',
+      validate: (value) => {
+        if (value.length < 1)
+          return 'You need to provide a name for the workspace';
+      },
+    })) as string;
+
+    if (!name) {
+      throw new Error('Workspace name is required');
+    }
+  }
+
+  let brand = argv.brand;
   if (!brand) {
     brand = (await text({
-      message: 'What brand would you like to bootstrap this workspace for?',
-      validate(value) {
-        if (value.length < 3) {
-          return 'Brand is required';
-        }
+      message: 'Which brand will use this workspace?',
+      initialValue: 'brand-name',
+      validate: (value) => {
+        if (value.length < 1)
+          return 'You need to provide a brand for the workspace';
       },
     })) as string;
 
     if (!brand) {
-      throw new Error('Please provide a brand name for the workspace');
+      throw new Error('Workspace brand is required');
     }
   }
 
-  // let targetDirectory = process.argv[3];
-  // if (!targetDirectory) {
-  //   targetDirectory = (await text({
-  //     message: 'What directory would you like to create this workspace in?',
-  //     initialValue: brand,
-  //     validate(value) {
-  //       if (value === brand) {
-  //         return 'Using brand name as directory for bootstrapping';
-  //       }
-  //     },
-  //   })) as string;
-
-  //   if (!targetDirectory) {
-  //     throw new Error('Please provide a directory name for the workspace');
-  //   }
-  // }
-
-  let nodeVersion = process.argv[3];
-  if (nodeVersion) {
-    nodeVersion = (await select({
-      message: 'What version of Node.js do you want to use?',
-      options: [
-        { value: 'nodejs20.x', label: 'Node.js v20' },
-        { value: 'nodejs22.x', label: 'Node.js v22' },
-      ],
-    })) as string;
-  }
-
-  let packageManager = process.argv[4];
-  if (packageManager) {
-    packageManager = (await select({
-      message: 'Which package manager do you want to use?',
-      options: [
-        { value: 'npm', label: 'npm' },
-        { value: 'pnpm', label: 'pnpm' },
-        { value: 'yarn', label: 'yarn' },
-      ],
-    })) as string;
-  }
-
-  console.log(`Creating the workspace for: ${brand}`);
+  const nodeVersion = argv['node-version'];
+  const packageManager = argv['package-manager'];
 
   // This assumes "nx-serverless" and "create-nx-serverless" are at the same version
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const presetVersion = require('../package.json').version;
 
-  // TODO: update below to customize the workspace
+  console.log(
+    `Creating the workspace for: ${name}, ${nodeVersion}, ${packageManager}`
+  );
+
+  // NOTE: update below to customize the workspace
   const { directory } = await createWorkspace(
     `nx-serverless@${presetVersion}`,
     {
-      name: brand,
+      name,
+      brand,
+      presetVersion,
       nodeVersion,
       nxCloud: 'skip',
       packageManager:
@@ -83,6 +81,7 @@ async function main() {
   );
 
   outro(`Successfully created the workspace: ${directory}.`);
+  process.exit(0);
 }
 
 main();

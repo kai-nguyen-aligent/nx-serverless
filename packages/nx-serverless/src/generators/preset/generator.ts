@@ -1,13 +1,14 @@
 import {
-  addDependenciesToPackageJson,
-  addProjectConfiguration,
+  Tree,
   formatFiles,
   generateFiles,
-  Tree,
   updateJson,
+  updateNxJson,
 } from '@nx/devkit';
 import * as path from 'path';
-import { dependencies, devDependencies, scripts } from './config';
+import { nxJson } from './config/nx-json';
+import { packageJson } from './config/package-json';
+import { vsCodeExtensions } from './config/vscode-extensions';
 import { PresetGeneratorSchema } from './schema';
 
 export async function presetGenerator(
@@ -15,28 +16,33 @@ export async function presetGenerator(
   options: PresetGeneratorSchema
 ) {
   const projectRoot = `.`;
-  addProjectConfiguration(tree, options.brand, {
-    root: projectRoot,
-    projectType: 'application',
-    targets: {
-      // NOTE: this update project.json file
-      build: {
-        executor: '@nx/next:build',
-      },
+
+  updateNxJson(tree, {
+    ...nxJson,
+    generators: {
+      ...nxJson.generators,
+      'nx-serverless:service': { brand: options.brand },
     },
   });
 
-  // NOTE: this update our package.json
   updateJson(tree, 'package.json', (json) => {
-    const originalScripts = json.scripts || {};
-    json.scripts = { ...originalScripts, ...scripts };
+    json = { ...packageJson };
+    json.version = options.presetVersion;
+    json.engines = { node: `^${options.nodeVersion}` };
+    json.engines[`${options.packageManager}`] = 'latest';
+    json.devDependencies = {
+      ...packageJson.devDependencies,
+      'nx-serverless': options.presetVersion,
+    };
     return json;
+  });
+
+  updateJson(tree, '.vscode/extensions.json', () => {
+    return { ...vsCodeExtensions };
   });
 
   generateFiles(tree, path.join(__dirname, 'files'), projectRoot, options);
   await formatFiles(tree);
-
-  return addDependenciesToPackageJson(tree, dependencies, devDependencies);
 }
 
 export default presetGenerator;
