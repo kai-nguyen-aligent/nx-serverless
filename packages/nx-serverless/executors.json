@@ -1,0 +1,9 @@
+{
+  "executors": {
+    "serverless": {
+      "implementation": "./src/executors/serverless/executor",
+      "schema": "./src/executors/serverless/schema.json",
+      "description": "Execute serverless commands"
+    }
+  }
+}
