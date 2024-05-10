@@ -1,60 +1,32 @@
 #!/usr/bin/env node
 
-import { intro, outro, text } from '@clack/prompts';
+import { intro, outro } from '@clack/prompts';
 import type { CreateWorkspaceOptions } from 'create-nx-workspace';
 import { createWorkspace } from 'create-nx-workspace';
 import yargs from 'yargs';
-import { hideBin } from 'yargs/helpers';
 
 const DEFAULT_NODE_VERSION = '20.13.1';
 const DEFAULT_PACKAGE_MANAGER = 'npm';
 
 async function main() {
-  // TODO: add more meaningful intro
-  intro('nx-serverless workspace generator');
-  const argv = await yargs(hideBin(process.argv))
+  const argv = await yargs(process.argv.slice(1))
     .options({
-      name: { type: 'string', alias: 'n', demandOption: true },
-      brand: { type: 'string', alias: 'b', demandOption: true },
+      name: {
+        type: 'string',
+        demandOption: true,
+        description: 'Set workspace name & directory',
+      },
+      brand: {
+        type: 'string',
+        demandOption: true,
+        description: 'Set brand name (normally client name)',
+      },
       'node-version': { type: 'string', default: DEFAULT_NODE_VERSION },
       'package-manager': { type: 'string', default: DEFAULT_PACKAGE_MANAGER },
     })
     .parse();
 
-  console.log(argv);
-
-  let name = argv.name;
-  if (!name) {
-    name = (await text({
-      message: 'What is the name of your workspace?',
-      initialValue: 'workspace-name',
-      validate: (value) => {
-        if (value.length < 1)
-          return 'You need to provide a name for the workspace';
-      },
-    })) as string;
-
-    if (!name) {
-      throw new Error('Workspace name is required');
-    }
-  }
-
-  let brand = argv.brand;
-  if (!brand) {
-    brand = (await text({
-      message: 'Which brand will use this workspace?',
-      initialValue: 'brand-name',
-      validate: (value) => {
-        if (value.length < 1)
-          return 'You need to provide a brand for the workspace';
-      },
-    })) as string;
-
-    if (!brand) {
-      throw new Error('Workspace brand is required');
-    }
-  }
-
+  const { name, brand } = argv;
   const nodeVersion = argv['node-version'];
   const packageManager = argv['package-manager'];
 
@@ -62,11 +34,10 @@ async function main() {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const presetVersion = require('../package.json').version;
 
-  console.log(
+  intro(
     `Creating the workspace for: ${name}, ${nodeVersion}, ${packageManager}`
   );
 
-  // NOTE: update below to customize the workspace
   const { directory } = await createWorkspace(
     `nx-serverless@${presetVersion}`,
     {
