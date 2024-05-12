@@ -21,18 +21,22 @@ export async function presetGenerator(
     ...nxJson,
     generators: {
       ...nxJson.generators,
-      'nx-serverless:service': { brand: options.brand },
+      '@aligent/nx-serverless:service': { brand: options.name },
     },
   });
 
   updateJson(tree, 'package.json', (json) => {
-    json = { ...packageJson };
+    json = {
+      name: `@${options.name}/integrations`,
+      description: `${options.name} integrations mono-repository`,
+      ...packageJson,
+    };
     json.version = options.presetVersion;
     json.engines = { node: `^${options.nodeVersion}` };
     json.engines[`${options.packageManager}`] = 'latest';
     json.devDependencies = {
+      '@aligent/nx-serverless': options.presetVersion,
       ...packageJson.devDependencies,
-      'nx-serverless': options.presetVersion,
     };
     return json;
   });

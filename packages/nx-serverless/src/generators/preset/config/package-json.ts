@@ -1,7 +1,7 @@
 interface PackageJson {
-  name: string;
+  name?: string;
   author: string;
-  description: string;
+  description?: string;
   scripts: Record<string, string>;
   dependencies: Record<string, string>;
   devDependencies: Record<string, string>;
@@ -9,10 +9,8 @@ interface PackageJson {
 }
 
 export const packageJson: PackageJson = {
-  name: '@aligent/nx-serverless-aws-nodejs-services',
   author: 'Aligent Consulting',
-  description:
-    'Aligent AWS microservices template using Typescript and Serverless Framework',
+  license: 'MIT',
   scripts: {
     test: 'nx affected -t test --coverage',
     'test:all': 'nx run-many -t test --coverage',
@@ -57,5 +55,4 @@ export const packageJson: PackageJson = {
     'vite-tsconfig-paths': '~4.3.2',
     vitest: '~1.6.0',
   },
-  license: 'MIT',
 };
