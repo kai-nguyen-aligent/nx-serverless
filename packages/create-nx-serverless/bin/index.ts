@@ -14,12 +14,7 @@ async function main() {
       name: {
         type: 'string',
         demandOption: true,
-        description: 'Set workspace name & directory',
-      },
-      brand: {
-        type: 'string',
-        demandOption: true,
-        description: 'Set brand name (normally client name)',
+        description: 'Set workspace name & directory (normally client name)',
       },
       'node-version': { type: 'string', default: DEFAULT_NODE_VERSION },
       'package-manager': { type: 'string', default: DEFAULT_PACKAGE_MANAGER },

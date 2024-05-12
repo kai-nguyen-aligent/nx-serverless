@@ -8,10 +8,6 @@
       "type": "string",
       "description": "Workspace name"
     },
-    "brand": {
-      "type": "string",
-      "description": "Brand name"
-    },
     "presetVersion": {
       "type": "string",
       "description": "Preset version"
