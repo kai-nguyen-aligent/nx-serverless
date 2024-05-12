@@ -39,7 +39,7 @@ async function main() {
   );
 
   const { directory } = await createWorkspace(
-    `nx-serverless@${presetVersion}`,
+    `@aligent/nx-serverless@${presetVersion}`,
     {
       name,
       brand,

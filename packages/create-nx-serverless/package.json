@@ -1,5 +1,5 @@
 {
-  "name": "create-nx-serverless",
+  "name": "@aligent/create-nx-serverless",
   "version": "0.0.1",
   "dependencies": {
     "@clack/prompts": "^0.7.0",
