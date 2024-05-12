@@ -1,0 +1,13 @@
+{
+  "name": "@aligent/nx-serverless-pipeline",
+  "version": "0.0.1",
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "type": "commonjs",
+  "main": "./src/index.js",
+  "typings": "./src/index.d.ts",
+  "bin": {
+    "nx-serverless-pipeline": "./bin/index.js"
+  }
+}

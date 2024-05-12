@@ -15,6 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@aligent/nx-serverless-pipeline": [
+        "packages/nx-serverless-pipeline/src/index.ts"
+      ],
       "nx-serverless": ["packages/nx-serverless/src/index.ts"]
     }
   },

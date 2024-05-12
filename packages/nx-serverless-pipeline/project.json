@@ -1,7 +1,7 @@
 {
-  "name": "create-nx-serverless",
+  "name": "nx-serverless-pipeline",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/create-nx-serverless/bin",
+  "sourceRoot": "packages/nx-serverless-pipeline/bin",
   "projectType": "library",
   "release": {
     "version": {
@@ -17,10 +17,10 @@
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/packages/create-nx-serverless",
-        "main": "packages/create-nx-serverless/bin/index.ts",
-        "tsConfig": "packages/create-nx-serverless/tsconfig.lib.json",
-        "assets": ["packages/create-nx-serverless/*.md"]
+        "outputPath": "dist/packages/nx-serverless-pipeline",
+        "main": "packages/nx-serverless-pipeline/bin/index.ts",
+        "tsConfig": "packages/nx-serverless-pipeline/tsconfig.lib.json",
+        "assets": ["packages/nx-serverless-pipeline/*.md"]
       }
     },
     "nx-release-publish": {
@@ -31,6 +31,5 @@
     "lint": {
       "executor": "@nx/eslint:lint"
     }
-  },
-  "implicitDependencies": ["nx-serverless"]
+  }
 }
