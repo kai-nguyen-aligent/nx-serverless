@@ -20,7 +20,10 @@ export async function presetGenerator(
   updateNxJson(tree, {
     ...nxJson,
     generators: {
-      '@aligent/nx-serverless:service': { brand: options.name },
+      '@aligent/nx-serverless:service': {
+        brand: options.name,
+        nodeVersionMajor: options.nodeVersionMajor,
+      },
       ...nxJson.generators,
     },
   });

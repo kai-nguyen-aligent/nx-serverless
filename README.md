@@ -80,10 +80,12 @@ It will show tasks that you can run with Nx.
 - [-] Deployment pipeline -> nodeJS container + pnpm
 - [x] Typescript compilation to check types (`tsc --noEmit`)
 - [x] Root client configuration (e.g. service name prefix)
-- [-] Base vite configuration -> this works for service generator.
-- [ ] Importing code from internal libraries
-- [ ] Bespoke library generator -> use same base vite configuration if we do this.
-- [ ] Develop workspace [preset](https://nx.dev/extending-nx/recipes/create-preset)
+- [-] Base vite configuration -> this works for service generator
+- [ ] MICRO:46: Importing code from internal libraries
+- [ ] Bespoke library generator? -> use same base vite configuration if we do this
+- [x] MICRO-309: Develop workspace [preset](https://nx.dev/extending-nx/recipes/create-preset)
 - [x] Pre-commit hooks
-- [ ] Add error notification service
-- [ ] Add step function metric configuration
+- [ ] MICRO-53: Add error notification service
+- [ ] Add step function metric/notification configuration
+- [ ] Add X-Ray configuration
+- [ ] MICRO-65: Handle service removal (serverless remove)

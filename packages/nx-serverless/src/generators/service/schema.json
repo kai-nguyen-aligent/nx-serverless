@@ -16,7 +16,11 @@
         "index": 0
       },
       "x-prompt": "What would you like to call the service?"
+    },
+    "nodeVersionMajor": {
+      "type": "string",
+      "description": "Node version to use for the service"
     }
   },
-  "required": [ "brand", "name" ]
+  "required": [ "brand", "name", "nodeVersionMajor" ]
 }
