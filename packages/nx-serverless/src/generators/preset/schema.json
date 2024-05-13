@@ -12,9 +12,13 @@
       "type": "string",
       "description": "Preset version"
     },
-    "nodeVersion": {
+    "nodeVersionMajor": {
       "type": "string",
-      "description": "Target Node.js version"
+      "description": "Target Node.js version (major)"
+    },
+    "nodeVersionMinor": {
+      "type": "string",
+      "description": "Target Node.js version (minor)"
     },
     "packageManager": {
       "type": "string",

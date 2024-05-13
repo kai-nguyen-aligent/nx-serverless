@@ -5,7 +5,7 @@ import type { CreateWorkspaceOptions } from 'create-nx-workspace';
 import { createWorkspace } from 'create-nx-workspace';
 import yargs from 'yargs';
 
-const DEFAULT_NODE_VERSION = '20.13.1';
+const DEFAULT_NODE_VERSION = '20.13';
 const DEFAULT_PACKAGE_MANAGER = 'npm';
 
 async function main() {
@@ -22,7 +22,7 @@ async function main() {
     .parse();
 
   const { name, brand } = argv;
-  const nodeVersion = argv['node-version'];
+  const nodeVersion = argv['node-version'].trim().split('.');
   const packageManager = argv['package-manager'];
 
   // This assumes "nx-serverless" and "create-nx-serverless" are at the same version
@@ -39,7 +39,8 @@ async function main() {
       name,
       brand,
       presetVersion,
-      nodeVersion,
+      nodeVersionMajor: nodeVersion[0],
+      nodeVersionMinor: nodeVersion[1],
       nxCloud: 'skip',
       packageManager:
         packageManager as CreateWorkspaceOptions['packageManager'],

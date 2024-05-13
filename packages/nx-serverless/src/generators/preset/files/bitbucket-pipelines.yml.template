@@ -1,0 +1,80 @@
+image: node:<%= nodeVersionMajor %>
+
+definitions:
+  services:
+    docker:
+      memory: 3072
+  steps:
+    - step: &install
+        name: ⚙️ Install
+        script:
+          - npm ci
+        artifacts:
+          - node_modules/**
+    - step: &lint
+        name: 🧹 Lint
+        script:
+          - npm run lint
+          - npm run format
+          - npm run check-types
+    - step: &test
+        name: 🧪 Test
+        script:
+          - npm run test
+    - step: &deploy-temp-stack
+        name: 🏗️ Test Deployment
+        script:
+          # Generate a random three letter stage name that isn't prd or stg
+          - TMP_STAGE=$(cat /dev/urandom | tr -dc 'a-z' | head -c3 | grep -vE 'prd|stg')
+          - echo "Deploy temporary service to stage:\ $TMP_STAGE"
+          - pipe: docker://aligent/nx-serverless-deploy-pipe:<%= nodeVersionMajor %>-alpine
+            variables:
+              AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+              AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+              CFN_ROLE: ${CFN_ROLE}
+              DEBUG: ${CI_DEBUG}
+              STAGE: ${TMP_STAGE}
+          - pipe: docker://aligent/nx-serverless-deploy-pipe:<%= nodeVersionMajor %>-alpine
+            variables:
+              AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+              AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+              CFN_ROLE: ${CFN_ROLE}
+              DEBUG: ${CI_DEBUG}
+              CMD: 'remove'
+              STAGE: ${TMP_STAGE}
+        artifacts:
+          download: false
+    - step: &push-serverless
+        name: 🚀 Deploy Service
+        script:
+          - pipe: docker://aligent/nx-serverless-deploy-pipe:<%= nodeVersionMajor %>-alpine
+            variables:
+              AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+              AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+              CFN_ROLE: ${CFN_ROLE}
+              STAGE: ${STAGE}
+              DEBUG: ${CI_DEBUG}
+              UPLOAD_BADGE: 'true'
+              APP_USERNAME: ${APP_USERNAME}
+              APP_PASSWORD: ${APP_PASSWORD}
+
+pipelines:
+  pull-requests:
+    '**':
+      - step: *install
+      - parallel:
+          steps:
+            - step: *test
+            - step: *lint
+            - step: *deploy-temp-stack
+  branches:
+    production:
+      - step:
+          <<: *push-serverless
+          name: 'Deploy Production'
+          deployment: Production
+    staging:
+      - step:
+          <<: *push-serverless
+          name: 'Deploy Staging'
+          deployment: Staging

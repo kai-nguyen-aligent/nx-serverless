@@ -74,3 +74,16 @@ It will show tasks that you can run with Nx.
 - [Join the community](https://nx.dev/community)
 - [Subscribe to the Nx Youtube Channel](https://www.youtube.com/@nxdevtools)
 - [Follow us on Twitter](https://twitter.com/nxdevtools)
+
+## Under development
+
+- [-] Deployment pipeline -> nodeJS container + pnpm
+- [x] Typescript compilation to check types (`tsc --noEmit`)
+- [x] Root client configuration (e.g. service name prefix)
+- [-] Base vite configuration -> this works for service generator.
+- [ ] Importing code from internal libraries
+- [ ] Bespoke library generator -> use same base vite configuration if we do this.
+- [ ] Develop workspace [preset](https://nx.dev/extending-nx/recipes/create-preset)
+- [x] Pre-commit hooks
+- [ ] Add error notification service
+- [ ] Add step function metric configuration

@@ -20,8 +20,8 @@ export async function presetGenerator(
   updateNxJson(tree, {
     ...nxJson,
     generators: {
-      ...nxJson.generators,
       '@aligent/nx-serverless:service': { brand: options.name },
+      ...nxJson.generators,
     },
   });
 
@@ -32,7 +32,9 @@ export async function presetGenerator(
       ...packageJson,
     };
     json.version = options.presetVersion;
-    json.engines = { node: `^${options.nodeVersion}` };
+    json.engines = {
+      node: `^${options.nodeVersionMajor}.${options.nodeVersionMinor}.0`,
+    };
     json.engines[`${options.packageManager}`] = 'latest';
     json.devDependencies = {
       '@aligent/nx-serverless': options.presetVersion,
