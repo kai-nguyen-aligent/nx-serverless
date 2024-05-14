@@ -15,11 +15,7 @@
         "skipLibCheck": true,
         "skipDefaultLibCheck": true,
         "baseUrl": ".",
-        "paths": {
-            "@aligent/serverless-plugin": [
-                "tools/serverless-plugin/src/index.ts"
-            ]
-        },
+        "paths": {},
         "types": ["node", "vitest", "vitest/globals"]
     },
     "exclude": ["node_modules", "tmp"]

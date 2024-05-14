@@ -27,36 +27,37 @@ definitions:
           # Generate a random three letter stage name that isn't prd or stg
           - TMP_STAGE=$(cat /dev/urandom | tr -dc 'a-z' | head -c3 | grep -vE 'prd|stg')
           - echo "Deploy temporary service to stage:\ $TMP_STAGE"
-          - pipe: docker://aligent/nx-serverless-deploy-pipe:<%= nodeVersionMajor %>-alpine
-            variables:
-              AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-              AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-              CFN_ROLE: ${CFN_ROLE}
-              DEBUG: ${CI_DEBUG}
-              STAGE: ${TMP_STAGE}
-          - pipe: docker://aligent/nx-serverless-deploy-pipe:<%= nodeVersionMajor %>-alpine
-            variables:
-              AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-              AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-              CFN_ROLE: ${CFN_ROLE}
-              DEBUG: ${CI_DEBUG}
-              CMD: 'remove'
-              STAGE: ${TMP_STAGE}
+          # We can replace `latest` with the actual version number by setting the `PIPELINE_VERSION` environment variable
+          - >-
+            npx @aligent/nx-serverless-pipeline@latest
+            --awsAccessKeyId ${AWS_ACCESS_KEY_ID}
+            --awsSecretAccessKey ${AWS_SECRET_ACCESS_KEY}
+            --cfnRole ${CFN_ROLE}
+            --debug ${CI_DEBUG}
+            --stage ${TMP_STAGE}
+          - >-
+            npx @aligent/nx-serverless-pipeline@latest
+            --awsAccessKeyId ${AWS_ACCESS_KEY_ID}
+            --awsSecretAccessKey ${AWS_SECRET_ACCESS_KEY}
+            --cfnRole ${CFN_ROLE}
+            --cmd 'remove'
+            --debug ${CI_DEBUG}
+            --stage ${TMP_STAGE}
         artifacts:
           download: false
     - step: &push-serverless
         name: 🚀 Deploy Service
         script:
-          - pipe: docker://aligent/nx-serverless-deploy-pipe:<%= nodeVersionMajor %>-alpine
-            variables:
-              AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-              AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-              CFN_ROLE: ${CFN_ROLE}
-              STAGE: ${STAGE}
-              DEBUG: ${CI_DEBUG}
-              UPLOAD_BADGE: 'true'
-              APP_USERNAME: ${APP_USERNAME}
-              APP_PASSWORD: ${APP_PASSWORD}
+          - >-
+            npx @aligent/nx-serverless-pipeline@latest
+            --awsAccessKeyId ${AWS_ACCESS_KEY_ID}
+            --awsSecretAccessKey ${AWS_SECRET_ACCESS_KEY}
+            --cfnRole ${CFN_ROLE}
+            --debug ${CI_DEBUG}
+            --stage ${STAGE}
+            --uploadBadge: 'true'
+            --appUsername ${APP_USERNAME}
+            --appPassword ${APP_PASSWORD}
 
 pipelines:
   pull-requests:
