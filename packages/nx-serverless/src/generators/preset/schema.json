@@ -25,5 +25,5 @@
       "description": "Target package manager"
     }
   },
-  "required": ["name", "presetVersion", "nodeVersion", "packageManager"]
+  "required": ["name", "presetVersion", "nodeVersionMajor", "nodeVersionMinor", "packageManager"]
 }
