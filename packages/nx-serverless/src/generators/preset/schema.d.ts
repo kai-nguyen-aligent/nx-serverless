@@ -1,7 +1,7 @@
 export interface PresetGeneratorSchema {
   name: string;
   presetVersion: string;
-  nodeVersionMajor: string;
-  nodeVersionMinor: string;
+  nodeVersionMajor: number;
+  nodeVersionMinor: number;
   packageManager: string;
 }

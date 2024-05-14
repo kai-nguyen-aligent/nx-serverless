@@ -39,8 +39,8 @@ async function main() {
       name,
       brand,
       presetVersion,
-      nodeVersionMajor: `${nodeVersion[0]}`,
-      nodeVersionMinor: `${nodeVersion[1]}`,
+      nodeVersionMajor: nodeVersion[0],
+      nodeVersionMinor: nodeVersion[1],
       nxCloud: 'skip',
       packageManager:
         packageManager as CreateWorkspaceOptions['packageManager'],

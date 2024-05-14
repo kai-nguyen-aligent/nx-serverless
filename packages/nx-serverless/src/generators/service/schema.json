@@ -18,7 +18,7 @@
       "x-prompt": "What would you like to call the service?"
     },
     "nodeVersionMajor": {
-      "type": "string",
+      "type": "number",
       "description": "Node version to use for the service"
     }
   },

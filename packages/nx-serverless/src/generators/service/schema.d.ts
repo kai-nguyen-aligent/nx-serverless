@@ -1,5 +1,5 @@
 export interface ServiceGeneratorSchema {
   brand: string;
   name: string;
-  nodeVersionMajor: string;
+  nodeVersionMajor: number;
 }
