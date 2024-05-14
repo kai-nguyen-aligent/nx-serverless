@@ -17,6 +17,14 @@ async function main() {
       throw new Error('AWS_ACCESS_KEY_ID or AWS_SECRET_ACCESS_KEY not set');
     }
 
+    if (argv.stage.length !== 3) {
+      throw new Error('Stage must be 3 characters');
+    }
+
+    if (argv.cmd !== 'deploy' && argv.cmd !== 'remove') {
+      throw new Error('Invalid command');
+    }
+
     const serverlessFiles = await findServerlessYaml(
       `${bitbucketEnvVars.cloneDir}/services`
     );
@@ -28,7 +36,7 @@ async function main() {
       [
         'npm ci',
         `npx serverless config credentials --provider aws --profile ${DEPLOYMENT_PROFILE}} --key ${argv.awsAccessKeyId} --secret ${argv.awsSecretAccessKey}`,
-        `npx nx run-many -t deploy -- --verbose --stage ${argv.stage} --aws-profile ${DEPLOYMENT_PROFILE}`,
+        `npx nx run-many -t ${argv.cmd} -- --verbose --stage ${argv.stage} --aws-profile ${DEPLOYMENT_PROFILE}`,
       ],
       argv.debug === 'true'
     );

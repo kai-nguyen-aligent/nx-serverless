@@ -6,6 +6,7 @@ interface BitbucketEnvironments {
 }
 
 interface DefaultParameters {
+  cmd: string;
   debug: string;
   stage: string;
   timezone: string;
@@ -22,6 +23,7 @@ export const bitbucketEnvVars: BitbucketEnvironments = {
 };
 
 export const defaultParameters: DefaultParameters = {
+  cmd: 'deploy',
   debug: 'false',
   stage: 'stg',
   timezone: 'Australia/Adelaide',

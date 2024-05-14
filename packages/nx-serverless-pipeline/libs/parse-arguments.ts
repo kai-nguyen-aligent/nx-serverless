@@ -7,12 +7,12 @@ export async function parseArguments() {
       awsAccessKeyId: {
         type: 'string',
         demandOption: true,
-        description: 'Injects AWS Access',
+        description: 'Injects AWS Access Key Id',
       },
       awsSecretAccessKey: {
         type: 'string',
         demandOption: true,
-        description: 'Injects AWS Secret',
+        description: 'Injects AWS Secret Access Key',
       },
       appUsername: {
         type: 'string',
@@ -28,6 +28,11 @@ export async function parseArguments() {
         type: 'string',
         demandOption: true,
         description: 'CloudFormation service role to use for deployment',
+      },
+      cmd: {
+        type: 'string',
+        default: defaultParameters.cmd,
+        description: 'The sls command to run (Accept: deploy/remove)',
       },
       debug: {
         type: 'string',
