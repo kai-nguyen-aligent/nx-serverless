@@ -2,8 +2,8 @@
   "name": "@aligent/nx-serverless",
   "version": "0.0.1",
   "dependencies": {
-    "@nx/devkit": "19.0.2",
-    "tslib": "^2.3.0"
+    "@nx/devkit": "19.0.3",
+    "tslib": "^2.6.2"
   },
   "type": "commonjs",
   "main": "./src/index.js",

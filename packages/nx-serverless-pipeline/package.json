@@ -2,7 +2,18 @@
   "name": "@aligent/nx-serverless-pipeline",
   "version": "0.0.1",
   "dependencies": {
-    "tslib": "^2.3.0"
+    "axios": "^1.6.8",
+    "badge-maker": "^3.3.1",
+    "dayjs": "^1.11.11",
+    "form-data": "^4.0.0",
+    "glob": "^10.3.4",
+    "js-yaml": "^4.1.0",
+    "js-yaml-cloudformation-schema": "^1.0.0",
+    "tslib": "^2.6.2",
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "@serverless/typescript": "^3.38.0"
   },
   "type": "commonjs",
   "main": "./src/index.js",
