@@ -7,7 +7,8 @@ import {
 import * as path from 'path';
 import { ServiceGeneratorSchema } from './schema';
 
-// TODO: MICRO-309: consider using executors instead?
+// TODO: MICRO-65: consider using executors instead?
+// ATM, build & deploy are manually configured in executor `dependOn` option in project.json
 const buildRunCommandConfig = (dir: string, command: string) => ({
   executor: 'nx:run-commands',
   options: {
@@ -34,7 +35,8 @@ export async function serviceGenerator(
         ...buildRunCommandConfig(projectRoot, 'sls deploy'),
       },
       remove: {
-        ...buildRunCommandConfig(projectRoot, 'sls remove'),
+        // ...buildRunCommandConfig(projectRoot, 'sls remove'),
+        executor: '@aligent/nx-serverless:remove',
       },
       lint: {
         executor: '@nx/linter:eslint',

@@ -9,7 +9,10 @@ const DEFAULT_NODE_VERSION = '20.13';
 const DEFAULT_PACKAGE_MANAGER = 'npm';
 
 async function main() {
-  const argv = await yargs(process.argv.slice(1))
+  const commandIndex = process.argv.findIndex((text) =>
+    text.endsWith('create-nx-serverless')
+  );
+  const argv = await yargs(process.argv.slice(commandIndex + 1))
     .options({
       name: {
         type: 'string',
@@ -19,9 +22,11 @@ async function main() {
       'node-version': { type: 'string', default: DEFAULT_NODE_VERSION },
       'package-manager': { type: 'string', default: DEFAULT_PACKAGE_MANAGER },
     })
+    .usage('Usage: $0 --name [name]')
+    .showHelpOnFail(false, 'Specify --help for available options')
     .parse();
 
-  const { name, brand } = argv;
+  const { name } = argv;
   const nodeVersion = argv['node-version'].trim().split('.');
   const packageManager = argv['package-manager'];
 
@@ -37,7 +42,6 @@ async function main() {
     `@aligent/nx-serverless@${presetVersion}`,
     {
       name,
-      brand,
       presetVersion,
       nodeVersionMajor: nodeVersion[0],
       nodeVersionMinor: nodeVersion[1],
