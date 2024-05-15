@@ -4,6 +4,7 @@ import { runCLICommand } from '../libs/cmd';
 import { DEPLOYMENT_PROFILE, bitbucketEnvVars } from '../libs/config';
 import { findServerlessYaml } from '../libs/find-serverless-yaml';
 import { injectCfnRole } from '../libs/inject-cfn-role';
+import { getPackageManagerCommands } from '../libs/package-manager';
 import { parseArguments } from '../libs/parse-arguments';
 import { uploadDeploymentBadge } from '../libs/upload-deployment-badge';
 
@@ -22,7 +23,7 @@ async function main() {
     }
 
     if (argv.cmd !== 'deploy' && argv.cmd !== 'remove') {
-      throw new Error('Invalid command');
+      throw new Error('Invalid serverless command');
     }
 
     const serverlessFiles = await findServerlessYaml(
@@ -32,11 +33,15 @@ async function main() {
       serverlessFiles.map((file) => injectCfnRole(file, argv.cfnRole))
     );
 
+    const { cleanInstall, execute } = await getPackageManagerCommands(
+      bitbucketEnvVars.cloneDir
+    );
+
     await runCLICommand(
       [
-        'npm ci',
-        `npx serverless config credentials --provider aws --profile ${DEPLOYMENT_PROFILE}} --key ${argv.awsAccessKeyId} --secret ${argv.awsSecretAccessKey}`,
-        `npx nx run-many -t ${argv.cmd} -- --verbose --stage ${argv.stage} --aws-profile ${DEPLOYMENT_PROFILE}`,
+        cleanInstall,
+        `${execute} serverless config credentials --provider aws --profile ${DEPLOYMENT_PROFILE}} --key ${argv.awsAccessKeyId} --secret ${argv.awsSecretAccessKey}`,
+        `${execute} nx run-many -t ${argv.cmd} -- --verbose --stage ${argv.stage} --aws-profile ${DEPLOYMENT_PROFILE}`,
       ],
       argv.debug === 'true'
     );
