@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/schema",
   "$id": "Preset",
-  "title": "",
+  "title": "Nx Generator for bootstrapping Serverless Framework Workspace",
   "type": "object",
   "properties": {
     "name": {
