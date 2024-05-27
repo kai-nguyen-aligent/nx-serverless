@@ -1,9 +1,7 @@
 import { NxJsonConfiguration } from '@nx/devkit';
 
 export const nxJson: NxJsonConfiguration = {
-  affected: {
-    defaultBase: 'origin/staging',
-  },
+  defaultBase: 'origin/staging',
   generators: {
     '@nx/js:library': {
       projectNameAndRootFormat: 'derived',

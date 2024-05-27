@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "version": 2,
+  "title": "An executor for linking services",
+  "description": "",
+  "type": "object",
+  "properties": {
+    "dependOn": {
+      "type": "array",
+      "description": "The name of the services that current service depends on."
+    }
+  },
+  "required": ["dependOn"]
+}

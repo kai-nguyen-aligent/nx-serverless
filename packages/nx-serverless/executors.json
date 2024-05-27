@@ -1,9 +1,9 @@
 {
   "executors": {
-    "remove": {
-      "implementation": "./src/executors/remove/executor",
-      "schema": "./src/executors/remove/schema.json",
-      "description": "Execute serverless remove with project dependence support"
+    "link": {
+      "implementation": "./src/executors/link/executor",
+      "schema": "./src/executors/link/schema.json",
+      "description": "An executor for linking services"
     }
   }
 }
