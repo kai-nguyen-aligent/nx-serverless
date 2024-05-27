@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "dependencies": {
     "@clack/prompts": "^0.7.0",
-    "create-nx-workspace": "19.0.2",
+    "create-nx-workspace": "19.0.3",
+    "tslib": "^2.6.2",
     "yargs": "^17.7.2"
   },
   "type": "commonjs",

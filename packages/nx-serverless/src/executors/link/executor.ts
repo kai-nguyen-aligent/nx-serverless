@@ -1,10 +1,9 @@
-import { ExecutorContext, readProjectConfiguration, Tree } from '@nx/devkit';
+import { ExecutorContext } from '@nx/devkit';
 import { LinkExecutorSchema } from './schema';
 
 export default async function runExecutor(
   options: LinkExecutorSchema,
-  context: ExecutorContext,
-  tree: Tree
+  context: ExecutorContext
 ) {
   const { dependOn } = options;
   console.log(dependOn);
@@ -14,7 +13,9 @@ export default async function runExecutor(
   for (const project in projects) {
     const name = projects[project].name;
     console.log('Project:', name);
-    const configuration = readProjectConfiguration(tree, name);
-    console.log(configuration.implicitDependencies);
   }
+
+  return {
+    success: true,
+  };
 }

@@ -1,6 +1,7 @@
 interface PackageJson {
   name?: string;
   author: string;
+  private: boolean;
   description?: string;
   scripts: Record<string, string>;
   dependencies: Record<string, string>;
@@ -10,6 +11,7 @@ interface PackageJson {
 
 export const packageJson: PackageJson = {
   author: 'Aligent Consulting',
+  private: true,
   license: 'MIT',
   scripts: {
     test: 'nx affected -t test --coverage',

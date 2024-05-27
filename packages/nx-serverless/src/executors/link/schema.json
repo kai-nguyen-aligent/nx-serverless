@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/schema",
   "version": 2,
   "title": "An executor for linking services",
-  "description": "",
+  "description": "An executor for linking services",
   "type": "object",
   "properties": {
     "dependOn": {

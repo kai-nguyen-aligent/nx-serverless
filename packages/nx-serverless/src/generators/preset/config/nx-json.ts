@@ -1,6 +1,7 @@
 import { NxJsonConfiguration } from '@nx/devkit';
 
-export const nxJson: NxJsonConfiguration = {
+export const nxJson: NxJsonConfiguration & { $schema: string } = {
+  $schema: './node_modules/nx/schemas/nx-schema.json',
   defaultBase: 'origin/staging',
   generators: {
     '@nx/js:library': {
@@ -23,21 +24,54 @@ export const nxJson: NxJsonConfiguration = {
   },
   targetDefaults: {
     build: {
+      executor: 'nx:run-commands',
+      options: {
+        command: 'serverless package',
+        color: true,
+      },
       dependsOn: ['^build'],
       inputs: ['production', '^production'],
       outputs: ['{projectRoot}/.serverless'],
       cache: true,
     },
+    deploy: {
+      executor: 'nx:run-commands',
+      options: {
+        command: 'serverless deploy',
+        color: true,
+      },
+      cache: false,
+    },
+    remove: {
+      executor: 'nx:run-commands',
+      options: {
+        command: 'serverless remove',
+        color: true,
+      },
+      cache: false,
+    },
     lint: {
+      executor: '@nx/linter:eslint',
+      options: {
+        lintFilePatterns: ['{projectRoot}/**/*.ts'],
+        maxWarnings: 0,
+      },
       inputs: [
         'default',
         '{workspaceRoot}/.eslintrc.json',
         '{workspaceRoot}/.eslintignore',
       ],
+      outputs: ['{options.outputFile}'],
       cache: true,
     },
-    '@nx/vite:test': {
+    test: {
+      executor: '@nx/vite:test',
+      options: {
+        passWithNoTests: true,
+        reportsDirectory: '{workspaceRoot}/coverage/{projectRoot}',
+      },
       inputs: ['default', '^production'],
+      outputs: ['{options.reportsDirectory}'],
       cache: true,
     },
   },

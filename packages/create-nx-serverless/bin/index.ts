@@ -35,7 +35,9 @@ async function main() {
   const presetVersion = require('../package.json').version;
 
   intro(
-    `Creating the workspace for: ${name}, ${nodeVersion}, ${packageManager}`
+    `Creating the workspace for: ${name}, using ${packageManager} and Nodejs v${nodeVersion.join(
+      '.'
+    )}`
   );
 
   const { directory } = await createWorkspace(

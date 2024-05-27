@@ -1,5 +1,6 @@
 import {
   Tree,
+  addDependenciesToPackageJson,
   formatFiles,
   generateFiles,
   updateJson,
@@ -38,20 +39,25 @@ export async function presetGenerator(
     json.engines = {
       node: `^${options.nodeVersionMajor}.${options.nodeVersionMinor}.0`,
     };
-    json.engines[`${options.packageManager}`] = 'latest';
-    json.devDependencies = {
-      '@aligent/nx-serverless': options.presetVersion,
-      ...packageJson.devDependencies,
-    };
+    json.engines[`${options.packageManager}`] = '>=10.5.2'; // TODO: no hardcode min version
     return json;
   });
+
+  // FIXME: NX auto run `npm install` for its dependencies. We may want to remove package-lock.json
 
   updateJson(tree, '.vscode/extensions.json', () => {
     return { ...vsCodeExtensions };
   });
 
   generateFiles(tree, path.join(__dirname, 'files'), projectRoot, options);
+
   await formatFiles(tree);
+
+  return addDependenciesToPackageJson(
+    tree,
+    {},
+    { '@aligent/nx-serverless': options.presetVersion }
+  );
 }
 
 export default presetGenerator;
