@@ -43,8 +43,6 @@ export async function presetGenerator(
     return json;
   });
 
-  // FIXME: NX auto run `npm install` for its dependencies. We may want to remove package-lock.json
-
   updateJson(tree, '.vscode/extensions.json', () => {
     return { ...vsCodeExtensions };
   });

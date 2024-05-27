@@ -7,17 +7,6 @@ import {
 import * as path from 'path';
 import { ServiceGeneratorSchema } from './schema';
 
-// TODO: MICRO-65: consider using executors instead?
-// ATM, build & deploy are manually configured in executor `dependOn` option in project.json
-const buildRunCommandConfig = (dir: string, command: string) => ({
-  executor: 'nx:run-commands',
-  options: {
-    cwd: dir,
-    color: true,
-    command: command,
-  },
-});
-
 export async function serviceGenerator(
   tree: Tree,
   options: ServiceGeneratorSchema
@@ -29,30 +18,19 @@ export async function serviceGenerator(
     sourceRoot: `${projectRoot}/src`,
     targets: {
       build: {
-        ...buildRunCommandConfig(projectRoot, 'sls package'),
+        executor: 'nx:run-commands',
       },
       deploy: {
-        ...buildRunCommandConfig(projectRoot, 'sls deploy'),
+        executor: 'nx:run-commands',
       },
       remove: {
-        // ...buildRunCommandConfig(projectRoot, 'sls remove'),
-        executor: '@aligent/nx-serverless:remove',
+        executor: 'nx:run-commands',
       },
       lint: {
         executor: '@nx/linter:eslint',
-        outputs: ['{options.outputFile}'],
-        options: {
-          lintFilePatterns: [projectRoot + '/**/*.ts'],
-          maxWarnings: 0,
-        },
       },
       test: {
         executor: '@nx/vite:test',
-        outputs: ['{options.reportsDirectory}'],
-        options: {
-          passWithNoTests: true,
-          reportsDirectory: `../../coverage/${projectRoot}`,
-        },
       },
     },
   });

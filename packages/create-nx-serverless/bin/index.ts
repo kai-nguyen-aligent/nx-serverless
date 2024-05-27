@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+// TODO: replace clack with ora
 import { intro, outro } from '@clack/prompts';
 import type { CreateWorkspaceOptions } from 'create-nx-workspace';
 import { createWorkspace } from 'create-nx-workspace';

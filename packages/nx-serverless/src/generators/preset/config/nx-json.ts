@@ -27,6 +27,7 @@ export const nxJson: NxJsonConfiguration & { $schema: string } = {
       executor: 'nx:run-commands',
       options: {
         command: 'serverless package',
+        cwd: '{projectRoot}',
         color: true,
       },
       dependsOn: ['^build'],
@@ -38,6 +39,7 @@ export const nxJson: NxJsonConfiguration & { $schema: string } = {
       executor: 'nx:run-commands',
       options: {
         command: 'serverless deploy',
+        cwd: '{projectRoot}',
         color: true,
       },
       cache: false,
@@ -46,6 +48,7 @@ export const nxJson: NxJsonConfiguration & { $schema: string } = {
       executor: 'nx:run-commands',
       options: {
         command: 'serverless remove',
+        cwd: '{projectRoot}',
         color: true,
       },
       cache: false,
