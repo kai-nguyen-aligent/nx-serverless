@@ -2,8 +2,8 @@
   "name": "@aligent/create-nx-serverless",
   "version": "0.0.1",
   "dependencies": {
-    "@clack/prompts": "^0.7.0",
     "create-nx-workspace": "19.0.3",
+    "ora": "^5.4.1",
     "tslib": "^2.6.2",
     "yargs": "^17.7.2"
   },

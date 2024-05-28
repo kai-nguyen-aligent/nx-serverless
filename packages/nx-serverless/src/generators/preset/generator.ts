@@ -1,6 +1,5 @@
 import {
   Tree,
-  addDependenciesToPackageJson,
   formatFiles,
   generateFiles,
   updateJson,
@@ -40,6 +39,11 @@ export async function presetGenerator(
       node: `^${options.nodeVersionMajor}.${options.nodeVersionMinor}.0`,
     };
     json.engines[`${options.packageManager}`] = '>=10.5.2'; // TODO: no hardcode min version
+    json.devDependencies = {
+      '@aligent/nx-serverless': options.presetVersion,
+      ...json.devDependencies,
+    };
+
     return json;
   });
 
@@ -50,12 +54,6 @@ export async function presetGenerator(
   generateFiles(tree, path.join(__dirname, 'files'), projectRoot, options);
 
   await formatFiles(tree);
-
-  return addDependenciesToPackageJson(
-    tree,
-    {},
-    { '@aligent/nx-serverless': options.presetVersion }
-  );
 }
 
 export default presetGenerator;
