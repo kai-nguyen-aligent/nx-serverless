@@ -22,6 +22,6 @@ updates:
     schedule:
       interval: "weekly"
   - package-ecosystem: "npm"
-    directory: "/packages/nx-serverless/src/generators/preset/config
+    directory: "/packages/nx-serverless/src/generators/preset/config"
     schedule:
       interval: "weekly"
