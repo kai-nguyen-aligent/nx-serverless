@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "dependencies": {
     "create-nx-workspace": "19.0.3",
-    "ora": "^5.4.1",
+    "ora": "^8.0.1",
     "tslib": "^2.6.2",
     "yargs": "^17.7.2"
   },
