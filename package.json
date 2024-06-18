@@ -15,7 +15,7 @@
     "@nx/jest": "19.0.3",
     "@nx/js": "19.0.3",
     "@nx/plugin": "19.0.3",
-    "@nx/workspace": "19.0.3",
+    "@nx/workspace": "19.3.0",
     "@serverless/typescript": "^3.38.0",
     "@swc-node/register": "~1.8.0",
     "@swc/cli": "~0.3.12",
