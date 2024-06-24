@@ -17,7 +17,7 @@
     "@nx/plugin": "19.3.0",
     "@nx/workspace": "19.3.0",
     "@serverless/typescript": "^3.38.0",
-    "@swc-node/register": "~1.8.0",
+    "@swc-node/register": "~1.9.2",
     "@swc/cli": "~0.3.12",
     "@swc/core": "~1.6.1",
     "@swc/helpers": "~0.5.11",
