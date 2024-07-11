@@ -16,23 +16,6 @@ export async function serviceGenerator(
     root: projectRoot,
     projectType: 'application',
     sourceRoot: `${projectRoot}/src`,
-    targets: {
-      build: {
-        executor: 'nx:run-commands',
-      },
-      deploy: {
-        executor: 'nx:run-commands',
-      },
-      remove: {
-        executor: 'nx:run-commands',
-      },
-      lint: {
-        executor: '@nx/linter:eslint',
-      },
-      test: {
-        executor: '@nx/vite:test',
-      },
-    },
   });
   generateFiles(tree, path.join(__dirname, 'files'), projectRoot, options);
   await formatFiles(tree);

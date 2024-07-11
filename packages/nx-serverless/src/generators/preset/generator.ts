@@ -41,6 +41,7 @@ export async function presetGenerator(
     json.engines[`${options.packageManager}`] = '>=10.5.2'; // TODO: no hardcode min version
     json.devDependencies = {
       '@aligent/nx-serverless': options.presetVersion,
+      '@aligent/nx-serverless-pipeline': options.presetVersion,
       ...json.devDependencies,
     };
 

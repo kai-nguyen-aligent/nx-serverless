@@ -71,7 +71,7 @@ async function main() {
   const nodeVersion = argv['node-version'].trim().split('.');
   const packageManager = argv['package-manager'];
 
-  // This assumes "nx-serverless" and "create-nx-serverless" are at the same version
+  // This assumes "nx-serverless", "create-nx-serverless" & "nx-serverless-pipeline" packages are at the same version
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const presetVersion = require('../package.json').version;
 
