@@ -14,7 +14,8 @@ async function installDependencies(
   args?: ReadonlyArray<string>,
   options?: cp.SpawnOptionsWithoutStdio
 ) {
-  const spinner = ora('Installing workspace dependencies').start();
+  const message = `${command} ${args ? args.join(' ') : ''}`;
+  const spinner = ora('Starting: ').start();
 
   try {
     const result = await new Promise(function (resolve, reject) {
@@ -38,12 +39,10 @@ async function installDependencies(
       });
     });
 
-    if (result !== 0) throw new Error(`Installation failed`);
-    spinner.succeed('Successfully install workspace dependencies');
+    if (result !== 0) throw new Error(`${message} failed`);
+    spinner.succeed(`${message} succeeded`);
   } catch (e) {
-    spinner.fail(
-      (e as Error).message || 'Unable to install workspace dependencies'
-    );
+    spinner.fail((e as Error).message);
   } finally {
     spinner.stop();
   }
@@ -51,7 +50,7 @@ async function installDependencies(
 
 async function main() {
   const commandIndex = process.argv.findIndex((text) =>
-    text.endsWith('create-nx-serverless')
+    text.includes('create-nx-serverless')
   );
   const argv = await yargs(process.argv.slice(commandIndex + 1))
     .options({
@@ -60,11 +59,21 @@ async function main() {
         demandOption: true,
         description: 'Set workspace name & directory (normally client name)',
       },
-      nodeVersion: { type: 'string', default: DEFAULT_NODE_VERSION },
-      packageManager: { type: 'string', default: DEFAULT_PACKAGE_MANAGER },
+      nodeVersion: {
+        type: 'string',
+        default: DEFAULT_NODE_VERSION,
+        description: 'Set Nodejs version',
+      },
+      packageManager: {
+        type: 'string',
+        default: DEFAULT_PACKAGE_MANAGER,
+        description: 'Set package manager',
+        choices: ['npm', 'pnpm', 'yarn'],
+      },
     })
     .usage('Usage: $0 --name [name]')
     .showHelpOnFail(false, 'Specify --help for available options')
+    .version()
     .parse();
 
   const { name, packageManager } = argv;
