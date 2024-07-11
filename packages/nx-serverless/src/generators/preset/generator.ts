@@ -5,6 +5,7 @@ import {
   updateJson,
   updateNxJson,
 } from '@nx/devkit';
+import latestVersion from 'latest-version';
 import * as path from 'path';
 import { nxJson } from './config/nx-json';
 import { packageJson } from './config/package-json';
@@ -16,13 +17,25 @@ export async function presetGenerator(
   options: PresetGeneratorSchema
 ) {
   const projectRoot = `.`;
+  const {
+    name,
+    presetVersion,
+    nodeVersionMajor,
+    nodeVersionMinor,
+    packageManager,
+  } = options;
+
+  const packageManagerVersion = await latestVersion(packageManager);
+
+  const tsConfigNodePackageName = `@tsconfig/node${nodeVersionMajor}`;
+  const tsConfigNodeVersion = await latestVersion(tsConfigNodePackageName);
 
   updateNxJson(tree, {
     ...nxJson,
     generators: {
       '@aligent/nx-serverless:service': {
-        brand: options.name,
-        nodeVersionMajor: options.nodeVersionMajor,
+        brand: name,
+        nodeVersionMajor: nodeVersionMajor,
       },
       ...nxJson.generators,
     },
@@ -30,20 +43,21 @@ export async function presetGenerator(
 
   updateJson(tree, 'package.json', (json) => {
     json = {
-      name: `@${options.name}/integrations`,
-      description: `${options.name} integrations mono-repository`,
+      name: `@${name}/integrations`,
+      description: `${name} integrations mono-repository`,
       ...packageJson,
     };
-    json.version = options.presetVersion;
+    json.version = presetVersion;
     json.engines = {
-      node: `^${options.nodeVersionMajor}.${options.nodeVersionMinor}.0`,
+      node: `^${nodeVersionMajor}.${nodeVersionMinor}.0`,
     };
-    json.engines[`${options.packageManager}`] = '>=10.5.2'; // TODO: no hardcode min version
+    json.engines[`${packageManager}`] = `^${packageManagerVersion}`;
     json.devDependencies = {
-      '@aligent/nx-serverless': options.presetVersion,
-      '@aligent/nx-serverless-pipeline': options.presetVersion,
+      '@aligent/nx-serverless': presetVersion,
+      '@aligent/nx-serverless-pipeline': presetVersion,
       ...json.devDependencies,
     };
+    json.devDependencies[tsConfigNodePackageName] = `^${tsConfigNodeVersion}`;
 
     return json;
   });
