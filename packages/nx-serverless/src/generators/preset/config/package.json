@@ -1,4 +1,5 @@
 {
+  "name": "@aligent/nx-serverless",
   "author": "Aligent Consulting",
   "private": true,
   "license": "MIT",
