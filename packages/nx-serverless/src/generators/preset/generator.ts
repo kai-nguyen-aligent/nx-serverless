@@ -8,7 +8,7 @@ import {
 import latestVersion from 'latest-version';
 import * as path from 'path';
 import { nxJson } from './config/nx-json';
-import { packageJson } from './config/package-json';
+import * as packageJson from './config/package.json';
 import { vsCodeExtensions } from './config/vscode-extensions';
 import { PresetGeneratorSchema } from './schema';
 

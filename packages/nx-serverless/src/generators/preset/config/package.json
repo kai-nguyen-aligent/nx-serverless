@@ -1,0 +1,43 @@
+{
+  "author": "Aligent Consulting",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "test": "nx affected -t test --coverage",
+    "test:all": "nx run-many -t test --coverage",
+    "lint": "nx affected -t lint",
+    "lint:all": "nx run-many -t lint",
+    "format:check": "nx affected -t format --check",
+    "format:check:all": "nx run-many -t format --check",
+    "format:write": "nx affected -t format --write",
+    "format:write:all": "nx run-many -t format --write",
+    "check-types": "nx affected -t check-types",
+    "check-types:all": "nx run-many -t check-types",
+    "prepare": "[ -d .git ] && git config core.hooksPath '.git-hooks' || true"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@aligent/serverless-conventions": "latest",
+    "@nx/js": "19.4.0",
+    "@nx/vite": "19.4.0",
+    "@nx/workspace": "19.4.0",
+    "@tsconfig/strictest": "^2.0.5",
+    "@types/aws-lambda": "^8.10.140",
+    "@types/node": "^20.14.9",
+    "@typescript-eslint/eslint-plugin": "^7.15.0",
+    "@typescript-eslint/parser": "^7.15.0",
+    "@vitest/coverage-v8": "^1.6.0",
+    "@vitest/ui": "~1.6.0",
+    "esbuild": "^0.23.0",
+    "eslint": "~9.6.0",
+    "eslint-config-prettier": "9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "nx": "19.4.0",
+    "prettier": "^3.3.2",
+    "tslib": "^2.6.3",
+    "typescript": "~5.5.3",
+    "vite": "~5.3.3",
+    "vite-tsconfig-paths": "~4.3.2",
+    "vitest": "~2.0.2"
+  }
+}
