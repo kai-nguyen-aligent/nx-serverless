@@ -20,7 +20,7 @@
   "devDependencies": {
     "@aligent/serverless-conventions": "latest",
     "@nx/js": "19.4.0",
-    "@nx/vite": "19.4.0",
+    "@nx/vite": "19.4.2",
     "@nx/workspace": "19.4.0",
     "@tsconfig/strictest": "^2.0.5",
     "@types/aws-lambda": "^8.10.140",
