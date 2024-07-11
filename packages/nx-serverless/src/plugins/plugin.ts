@@ -17,9 +17,12 @@ import { workspaceDataDirectory } from 'nx/src/utils/cache-directory';
 import { dirname, join } from 'path';
 import {
   buildBuildTarget,
+  buildCheckTypesTarget,
   buildDeployTarget,
+  buildFormatTarget,
   buildLinkTarget,
   buildRemoveTarget,
+  normalizeOptions,
   ServerlessPluginOptions,
 } from '../utils/targets';
 
@@ -116,8 +119,6 @@ async function buildServerlessTargets(
 
   const targets: Record<string, TargetConfiguration> = {};
 
-  targets[options.linkTargetName] = buildLinkTarget(name);
-
   targets[options.buildTargetName] = buildBuildTarget(
     name,
     projectRoot,
@@ -137,6 +138,20 @@ async function buildServerlessTargets(
     namedInputs
   );
 
+  targets[options.checkTypesTargetName] = buildCheckTypesTarget(
+    name,
+    projectRoot,
+    namedInputs
+  );
+
+  targets[options.formatTargetName] = buildFormatTarget(
+    name,
+    projectRoot,
+    namedInputs
+  );
+
+  targets[options.linkTargetName] = buildLinkTarget(name);
+
   const metadata = {};
   return { targets, metadata };
 }
@@ -152,15 +167,4 @@ function writeTargetsCache(
   cache: Record<string, ServerlessTargets>
 ) {
   writeJsonFile(cachePath, cache);
-}
-
-function normalizeOptions(
-  options: ServerlessPluginOptions
-): ServerlessPluginOptions {
-  options ??= {};
-  options.linkTargetName ??= 'link';
-  options.buildTargetName ??= 'build';
-  options.deployTargetName ??= 'deploy';
-  options.removeTargetName ??= 'remove';
-  return options;
 }
