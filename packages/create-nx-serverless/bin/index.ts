@@ -60,16 +60,15 @@ async function main() {
         demandOption: true,
         description: 'Set workspace name & directory (normally client name)',
       },
-      'node-version': { type: 'string', default: DEFAULT_NODE_VERSION },
-      'package-manager': { type: 'string', default: DEFAULT_PACKAGE_MANAGER },
+      nodeVersion: { type: 'string', default: DEFAULT_NODE_VERSION },
+      packageManager: { type: 'string', default: DEFAULT_PACKAGE_MANAGER },
     })
     .usage('Usage: $0 --name [name]')
     .showHelpOnFail(false, 'Specify --help for available options')
     .parse();
 
-  const { name } = argv;
-  const nodeVersion = argv['node-version'].trim().split('.');
-  const packageManager = argv['package-manager'];
+  const { name, packageManager } = argv;
+  const nodeVersion = argv.nodeVersion.trim().split('.');
 
   // This assumes "nx-serverless", "create-nx-serverless" & "nx-serverless-pipeline" packages are at the same version
   // eslint-disable-next-line @typescript-eslint/no-var-requires
