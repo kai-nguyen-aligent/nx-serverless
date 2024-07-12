@@ -13,7 +13,7 @@
     "stop-local-registry": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": "pkill -f verdaccio"
+        "command": "pkill -f verdaccio"
       }
     }
   }
