@@ -30,7 +30,7 @@
     "axios": "^1.6.8",
     "badge-maker": "^3.3.1",
     "dayjs": "^1.11.11",
-    "eslint": "~8.57.0",
+    "eslint": "~9.6.0",
     "eslint-config-prettier": "^9.0.0",
     "form-data": "^4.0.0",
     "glob": "^10.4.2",
