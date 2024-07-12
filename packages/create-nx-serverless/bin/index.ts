@@ -12,37 +12,46 @@ const DEFAULT_PACKAGE_MANAGER = 'npm';
 async function installDependencies(
   command: string,
   args?: ReadonlyArray<string>,
-  options?: cp.SpawnOptionsWithoutStdio
+  cwd?: string
 ) {
   const message = `${command} ${args ? args.join(' ') : ''}`;
-  const spinner = ora('Starting: ').start();
+  const spinner = ora(`Executing '${message}'`).start();
+
+  const options: cp.SpawnOptionsWithStdioTuple<
+    cp.StdioNull,
+    cp.StdioPipe,
+    cp.StdioPipeNamed
+  > = { cwd, detached: true, stdio: ['ignore', 'pipe', 'pipe'] };
 
   try {
     const result = await new Promise(function (resolve, reject) {
-      const process = cp.spawn(command, args, options);
+      const child = cp.spawn(command, args || [], options);
 
-      process.stdout.on('data', (data) => {
+      // unref child process from parent
+      // child.unref();
+
+      child.stdout.on('data', (data) => {
         spinner.info(data.toString());
       });
 
-      process.stderr.on('data', (data) => {
+      child.stderr.on('data', (data) => {
         spinner.warn(data.toString());
       });
 
-      process.on('exit', function (code) {
+      child.on('exit', function (code) {
         if (code !== 0) reject(code);
         resolve(code);
       });
 
-      process.on('error', function (err) {
+      child.on('error', function (err) {
         reject(err);
       });
     });
 
-    if (result !== 0) throw new Error(`${message} failed`);
-    spinner.succeed(`${message} succeeded`);
+    if (result !== 0) throw new Error(`ErrorCode: ${result}`);
+    spinner.succeed(`Successfully executed '${message}'`);
   } catch (e) {
-    spinner.fail((e as Error).message);
+    spinner.fail(`Failed to execute '${message}'`);
   } finally {
     spinner.stop();
   }
@@ -104,9 +113,9 @@ async function main() {
 
   ora('Prepare workspace dependencies').succeed();
 
-  await installDependencies(packageManager, ['install'], {
-    cwd: directory,
-  });
+  await installDependencies(packageManager, ['install'], directory);
+
+  ora(`Successfully created workspace at: ${directory}`).succeed();
 }
 
 main();

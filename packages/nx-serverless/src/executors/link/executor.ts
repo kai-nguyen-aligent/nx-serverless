@@ -4,6 +4,7 @@ import {
   readJsonFile,
   writeJsonFile,
 } from '@nx/devkit';
+import * as ora from 'ora';
 import * as path from 'path';
 import { LinkExecutorSchema } from './schema';
 
@@ -11,45 +12,82 @@ export default async function runExecutor(
   options: LinkExecutorSchema,
   context: ExecutorContext
 ) {
-  const { dependOn } = options;
-  console.log(dependOn);
+  const { from, to } = options;
 
-  const projects = context.projectsConfigurations.projects;
-  const currentProject = projects[context.projectName];
-
-  for (const project in projects) {
-    const { name } = projects[project];
-
-    if (dependOn.includes(name)) {
-      console.log(`Linking ${context.projectName} to ${name}`);
-
-      const configFile = path.join(currentProject.root, 'project.json');
-      const existingConfig = readJsonFile<ProjectConfiguration>(configFile);
-
-      if (!existingConfig) {
-        throw new Error(`Project config not found at ${configFile}`);
-      }
-
-      const { implicitDependencies } = existingConfig;
-
-      const updatedImplicitDependencies: string[] = implicitDependencies
-        ? [...implicitDependencies]
-        : [];
-
-      if (!updatedImplicitDependencies.includes(name)) {
-        updatedImplicitDependencies.push(name);
-      }
-
-      writeJsonFile<ProjectConfiguration>(configFile, {
-        ...existingConfig,
-        implicitDependencies: updatedImplicitDependencies,
-      });
-
-      console.log(`${name} linked successfully`);
+  try {
+    if ((from && to) || (!from && !to)) {
+      throw new Error('Only specify "--from" or "--to"');
     }
+
+    const projects = context.projectsConfigurations.projects;
+    const currentProject = projects[context.projectName];
+
+    for (const project in projects) {
+      const targetProject = projects[project];
+
+      if (to.includes(targetProject.name)) {
+        const configFile = path.join(currentProject.root, 'project.json');
+        const existingConfig = readJsonFile<ProjectConfiguration>(configFile);
+
+        if (!existingConfig) {
+          throw new Error(`Project config not found at ${configFile}`);
+        }
+
+        const implicitDependencies = updateProjectImplicitDependencies(
+          existingConfig,
+          targetProject.name
+        );
+
+        writeJsonFile<ProjectConfiguration>(configFile, {
+          ...existingConfig,
+          implicitDependencies,
+        });
+
+        ora(
+          `${currentProject.name} successfully linked TO ${targetProject.name}`
+        ).succeed();
+      }
+
+      if (from.includes(targetProject.name)) {
+        const configFile = path.join(targetProject.root, 'project.json');
+        const existingConfig = readJsonFile<ProjectConfiguration>(configFile);
+
+        if (!existingConfig) {
+          throw new Error(`Project config not found at ${configFile}`);
+        }
+
+        const implicitDependencies = updateProjectImplicitDependencies(
+          existingConfig,
+          currentProject.name
+        );
+
+        writeJsonFile<ProjectConfiguration>(configFile, {
+          ...existingConfig,
+          implicitDependencies,
+        });
+
+        ora(
+          `${currentProject.name} successfully linked FROM ${targetProject.name}`
+        ).succeed();
+      }
+    }
+
+    return { success: true };
+  } catch (err) {
+    ora((err as Error).message).fail();
+    return { success: false };
+  }
+}
+
+function updateProjectImplicitDependencies(
+  targetConfig: ProjectConfiguration,
+  projectName: string
+) {
+  const implicitDependencies = targetConfig.implicitDependencies || [];
+
+  if (!implicitDependencies.includes(projectName)) {
+    implicitDependencies.push(projectName);
   }
 
-  return {
-    success: true,
-  };
+  return implicitDependencies;
 }

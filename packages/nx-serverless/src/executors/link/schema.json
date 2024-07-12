@@ -5,10 +5,14 @@
   "description": "An executor for linking services",
   "type": "object",
   "properties": {
-    "dependOn": {
+    "from": {
+      "type": "array",
+      "description": "The name of the services that depends on current service."
+    },
+    "to": {
       "type": "array",
       "description": "The name of the services that current service depends on."
     }
   },
-  "required": ["dependOn"]
+  "required": []
 }

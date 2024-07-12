@@ -1,3 +1,4 @@
 export interface LinkExecutorSchema {
-  dependOn: string[];
+  from?: string[];
+  to?: string[];
 }
