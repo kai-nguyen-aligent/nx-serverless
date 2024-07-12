@@ -13,7 +13,7 @@
           "error",
           {
             "enforceBuildableLibDependency": true,
-            "allow": ["packages/nx-serverless/src/generators/preset/config"],
+            "allow": [],
             "depConstraints": [
               {
                 "sourceTag": "*",

@@ -25,7 +25,7 @@ export default async function runExecutor(
     for (const project in projects) {
       const targetProject = projects[project];
 
-      if (to.includes(targetProject.name)) {
+      if (to && to.includes(targetProject.name)) {
         const configFile = path.join(currentProject.root, 'project.json');
         const existingConfig = readJsonFile<ProjectConfiguration>(configFile);
 
@@ -48,7 +48,7 @@ export default async function runExecutor(
         ).succeed();
       }
 
-      if (from.includes(targetProject.name)) {
+      if (from && from.includes(targetProject.name)) {
         const configFile = path.join(targetProject.root, 'project.json');
         const existingConfig = readJsonFile<ProjectConfiguration>(configFile);
 
