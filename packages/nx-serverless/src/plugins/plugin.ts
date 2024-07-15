@@ -39,18 +39,31 @@ export const createNodesV2: CreateNodesV2<ServerlessPluginOptions> = [
     options,
     context: CreateNodesContext
   ) => {
-    const optionsHash = hashObject(options);
-    const cachePath = join(workspaceDataDirectory, `sls-${optionsHash}.hash`);
+    const cacheHash = hashObject(options);
+    const cachePath = join(
+      workspaceDataDirectory,
+      `serverless-${cacheHash}.hash`
+    );
     const targetsCache = readTargetsCache(cachePath);
 
+    // Ensure configFilePaths is an array as glob returns a string if there is only one file
     configFilePaths = Array.isArray(configFilePaths)
       ? configFilePaths
       : [configFilePaths];
 
+    const projects = getProjects(context.workspaceRoot, configFilePaths);
+    const dependencies = getDependencies(projects);
+
     try {
       return await createNodesFromFiles(
         (configFile, options, context) =>
-          createNodesInternal(configFile, options, context, targetsCache),
+          createNodesInternal(
+            configFile,
+            options,
+            context,
+            dependencies,
+            targetsCache
+          ),
         configFilePaths,
         options,
         context
@@ -65,26 +78,24 @@ async function createNodesInternal(
   configFilePath: string,
   options: ServerlessPluginOptions,
   context: CreateNodesContext,
+  dependencies: Record<string, string[]>,
   targetsCache: Record<string, ServerlessTargets>
 ) {
   const projectRoot = dirname(configFilePath);
-  // Do not create a project if package.json and project.json isn't there.
-  const siblingFiles = readdirSync(join(context.workspaceRoot, projectRoot));
-  if (
-    !siblingFiles.includes('package.json') &&
-    !siblingFiles.includes('project.json')
-  ) {
+
+  if (!isProject(context.workspaceRoot, projectRoot)) {
     return {};
   }
 
   const normalizedOptions = normalizeOptions(options);
 
   // We do not want to alter how the hash is calculated, so appending the config file path to the hash
-  // to prevent serverless files overwriting the target cache created by the other
+  // to prevent overwriting the target cache created by the other plugins.
   const hash =
     (await calculateHashForCreateNodes(
       projectRoot,
-      normalizedOptions,
+      // We also make sure that the cache tracks projects dependencies graph.
+      { ...options, dependencies },
       context,
       [getLockFileName(detectPackageManager(context.workspaceRoot))]
     )) + configFilePath;
@@ -92,6 +103,7 @@ async function createNodesInternal(
   targetsCache[hash] ??= await buildServerlessTargets(
     projectRoot,
     normalizedOptions,
+    dependencies,
     context
   );
 
@@ -111,7 +123,8 @@ async function createNodesInternal(
 
 async function buildServerlessTargets(
   projectRoot: string,
-  options: ServerlessPluginOptions,
+  options: Required<ServerlessPluginOptions>,
+  dependencies: Record<string, string[]>,
   context: CreateNodesContext
 ): Promise<ServerlessTargets> {
   const name = readJsonFile(join(projectRoot, 'project.json')).name;
@@ -135,6 +148,7 @@ async function buildServerlessTargets(
   targets[options.removeTargetName] = buildRemoveTarget(
     name,
     projectRoot,
+    dependencies,
     namedInputs
   );
 
@@ -167,4 +181,43 @@ function writeTargetsCache(
   cache: Record<string, ServerlessTargets>
 ) {
   writeJsonFile(cachePath, cache);
+}
+
+// It's a project if both package.json and project.json are there.
+function isProject(workspaceRoot: string, projectRoot: string): boolean {
+  const siblingFiles = readdirSync(join(workspaceRoot, projectRoot));
+
+  return (
+    siblingFiles.includes('package.json') &&
+    siblingFiles.includes('project.json')
+  );
+}
+
+function getProjects(
+  workspaceRoot: string,
+  configFilePaths: readonly string[]
+) {
+  return configFilePaths
+    .map((path) => {
+      const projectRoot = dirname(path);
+      if (!isProject(workspaceRoot, projectRoot)) {
+        return null;
+      }
+
+      return readJsonFile<ProjectConfiguration>(
+        join(projectRoot, 'project.json')
+      );
+    })
+    .filter(Boolean);
+}
+
+function getDependencies(projects: ProjectConfiguration[]) {
+  const dependencies: Record<string, string[]> = {};
+
+  projects.forEach(
+    (project) =>
+      (dependencies[project.name] = project.implicitDependencies || [])
+  );
+
+  return dependencies;
 }

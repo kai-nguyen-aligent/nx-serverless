@@ -18,16 +18,16 @@ export interface ServerlessPluginOptions {
 
 export function normalizeOptions(
   options: ServerlessPluginOptions
-): ServerlessPluginOptions {
-  options ??= {};
-  options.buildTargetName ??= 'build';
-  options.deployTargetName ??= 'deploy';
-  options.removeTargetName ??= 'remove';
-  options.checkTypesTargetName ??= 'check-types';
-  options.formatTargetName ??= 'format';
-  options.linkTargetName ??= 'link';
-  options.unlinkTargetName ??= 'unlink';
-  return options;
+): Required<ServerlessPluginOptions> {
+  return {
+    buildTargetName: options.buildTargetName || 'build',
+    deployTargetName: options.deployTargetName || 'deploy',
+    removeTargetName: options.removeTargetName || 'remove',
+    checkTypesTargetName: options.checkTypesTargetName || 'check-types',
+    formatTargetName: options.formatTargetName || 'format',
+    linkTargetName: options.linkTargetName || 'link',
+    unlinkTargetName: options.unlinkTargetName || 'unlink',
+  };
 }
 
 export function buildBuildTarget(
@@ -111,11 +111,16 @@ export function buildDeployTarget(
 export function buildRemoveTarget(
   name: string,
   projectRoot: string,
+  dependencies: Record<string, string[]>,
   namedInputs: Record<string, unknown>
 ) {
-  // TODO: implement the dependency injection
+  // Find and collect all the project names where this project is a dependency
+  const projects = Object.keys(dependencies).filter((dep) =>
+    dependencies[dep].includes(name)
+  );
+
   const dependenciesConfig: TargetDependencyConfig = {
-    projects: '{dependencies}',
+    projects,
     target: 'remove',
     params: 'forward',
   };

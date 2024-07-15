@@ -1,3 +1,7 @@
+## 1.0.8 (2024-07-15)
+
+This was a version bump only, there were no code changes.
+
 ## 1.0.6-2 (2024-07-15)
 
 This was a version bump only, there were no code changes.
