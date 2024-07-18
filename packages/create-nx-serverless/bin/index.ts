@@ -85,17 +85,14 @@ async function main() {
     .version()
     .parse();
 
-  const { name, packageManager } = argv;
-  const nodeVersion = argv.nodeVersion.trim().split('.');
+  const { name, nodeVersion, packageManager } = argv;
 
   // This assumes "nx-serverless", "create-nx-serverless" & "nx-serverless-pipeline" packages are at the same version
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const presetVersion = require('../package.json').version;
 
   ora(
-    `Creating the workspace for: ${name}, using ${packageManager} and Nodejs v${nodeVersion.join(
-      '.'
-    )}`
+    `Creating the workspace for: ${name}, using ${packageManager} and Nodejs v${nodeVersion}`
   ).succeed();
 
   const { directory } = await createWorkspace(
@@ -103,8 +100,7 @@ async function main() {
     {
       name,
       presetVersion,
-      nodeVersionMajor: nodeVersion[0],
-      nodeVersionMinor: nodeVersion[1],
+      nodeVersion,
       nxCloud: 'skip',
       packageManager:
         packageManager as CreateWorkspaceOptions['packageManager'],

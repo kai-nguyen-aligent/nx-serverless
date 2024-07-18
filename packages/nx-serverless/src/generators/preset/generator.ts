@@ -56,55 +56,69 @@ const NX_JSON: NxJsonConfiguration & { $schema: string } = {
   },
 };
 
+// FIXME: We can't use latest-version and ora because if ESM issue.
+// https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
+// https://github.com/microsoft/TypeScript/issues/43329#issuecomment-922544562
+async function getPackageVersion(
+  packageName: string,
+  semver: 'minor' | 'patch',
+  version?: string
+): Promise<string> {
+  const latest = await latestVersion(packageName, { version });
+
+  if (semver === 'minor') {
+    return `^${latest}`;
+  }
+
+  return `~${latest}`;
+}
+
 export async function presetGenerator(
   tree: Tree,
   options: PresetGeneratorSchema
 ) {
-  const projectRoot = `.`;
-  const { name, presetVersion, nodeVersionMajor, nodeVersionMinor } = options;
-
-  // FIXME: We can't use latest-version and ora because if ESM issue.
-  // https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
-  // https://github.com/microsoft/TypeScript/issues/43329#issuecomment-922544562
-  const tsConfigNodePackageName = `@tsconfig/node${nodeVersionMajor}`;
-  const tsConfigNodeVersion = await latestVersion(tsConfigNodePackageName);
+  const { name, presetVersion, nodeVersion } = options;
 
   updateNxJson(tree, {
     ...NX_JSON,
     generators: {
       '@aligent/nx-serverless:service': {
         brand: name,
-        nodeVersionMajor: nodeVersionMajor,
       },
       ...NX_JSON.generators,
     },
   });
 
-  updateJson(tree, 'package.json', (json) => {
-    json = {
+  updateJson(tree, 'package.json', async () => {
+    const [nodeVersionMajor, nodeVersionMinor] = nodeVersion.split('.');
+    const tsConfigNode = `@tsconfig/node${nodeVersionMajor}`;
+
+    const devDependencies = Object.fromEntries(
+      Object.entries({
+        '@aligent/nx-serverless': presetVersion,
+        '@aligent/nx-serverless-pipeline': presetVersion,
+        [tsConfigNode]: await getPackageVersion(tsConfigNode, 'minor'),
+        ...packageJson.devDependencies,
+      }).sort()
+    );
+
+    return {
       name: `@${name}/integrations`,
       description: `${name} integrations mono-repository`,
+      version: presetVersion,
+      engines: {
+        node: `^${nodeVersionMajor}.${nodeVersionMinor}.0`,
+      },
+      devDependencies,
       ...packageJson,
     };
-    json.version = presetVersion;
-    json.engines = {
-      node: `>=${nodeVersionMajor}.${nodeVersionMinor}.0`,
-    };
-    json.devDependencies = {
-      '@aligent/nx-serverless': presetVersion,
-      '@aligent/nx-serverless-pipeline': presetVersion,
-      ...json.devDependencies,
-    };
-    json.devDependencies[tsConfigNodePackageName] = `^${tsConfigNodeVersion}`;
-
-    return json;
   });
 
   updateJson(tree, '.vscode/extensions.json', () => {
     return { ...VS_CODE_EXTENSIONS };
   });
 
-  generateFiles(tree, path.join(__dirname, 'files'), projectRoot, options);
+  generateFiles(tree, path.join(__dirname, 'files'), '.', options);
 
   await formatFiles(tree);
 }
