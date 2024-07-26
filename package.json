@@ -48,6 +48,9 @@
     "verdaccio": "^5.31.1",
     "yargs": "^17.7.2"
   },
+  "engines": {
+    "node": ">=18.16.9"
+  },
   "nx": {
     "includedScripts": []
   },
