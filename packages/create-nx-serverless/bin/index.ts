@@ -3,11 +3,14 @@
 import * as cp from 'child_process';
 import type { CreateWorkspaceOptions } from 'create-nx-workspace';
 import { createWorkspace } from 'create-nx-workspace';
+import * as fs from 'fs';
 import * as ora from 'ora';
+import * as path from 'path';
 import yargs from 'yargs';
 
-const DEFAULT_NODE_VERSION = '20.13';
-const DEFAULT_PACKAGE_MANAGER = 'npm';
+// TODO: validation on version to requires correct semver (x.x.x)
+const DEFAULT_NODE_VERSION = '20.13.0';
+const DEFAULT_PACKAGE_MANAGER = 'pnpm';
 
 async function installDependencies(
   command: string,
@@ -87,6 +90,8 @@ async function main() {
 
   const { name, nodeVersion, packageManager } = argv;
 
+  // TODO: Accept preset package name and version from clo param
+  // This will enable the support of new Mesh repos, PWA repos etc. as a command line tool.
   // This assumes "nx-serverless", "create-nx-serverless" & "nx-serverless-pipeline" packages are at the same version
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const presetVersion = require('../package.json').version;
@@ -95,23 +100,36 @@ async function main() {
     `Creating the workspace for: ${name}, using ${packageManager} and Nodejs v${nodeVersion}`
   ).succeed();
 
-  const { directory } = await createWorkspace(
-    `@aligent/nx-serverless@${presetVersion}`,
-    {
-      name,
-      presetVersion,
-      nodeVersion,
-      nxCloud: 'skip',
-      packageManager:
-        packageManager as CreateWorkspaceOptions['packageManager'],
+  try {
+    const { directory } = await createWorkspace(
+      `@aligent/nx-serverless@${presetVersion}`,
+      {
+        name,
+        presetVersion,
+        nodeVersion,
+        nxCloud: 'skip',
+        packageManager:
+          packageManager as CreateWorkspaceOptions['packageManager'],
+      }
+    );
+
+    ora('Prepare workspace dependencies').succeed();
+
+    await installDependencies(packageManager, ['install'], directory);
+
+    ora(`Successfully created workspace at: ${directory}`).succeed();
+  } catch (e) {
+    console.error(e);
+
+    const dirPath = path.join(process.cwd(), name);
+
+    if (fs.existsSync(dirPath)) {
+      console.warn(`Removing newly created folder: ${dirPath}`);
+      fs.rmdirSync(dirPath);
     }
-  );
 
-  ora('Prepare workspace dependencies').succeed();
-
-  await installDependencies(packageManager, ['install'], directory);
-
-  ora(`Successfully created workspace at: ${directory}`).succeed();
+    console.error('Failed to create workspace');
+  }
 }
 
 main();
