@@ -95,11 +95,11 @@ async function constructPackageJsonFile(
     name: `@${name}/integrations`,
     description: `${name} integrations mono-repository`,
     version: presetVersion,
+    ...packageJson,
+    devDependencies,
     engines: {
       node: `^${nodeVersionMajor}.${nodeVersionMinor}.0`,
     },
-    devDependencies,
-    ...packageJson,
   };
 }
 

@@ -3,13 +3,13 @@
 import * as cp from 'child_process';
 import type { CreateWorkspaceOptions } from 'create-nx-workspace';
 import { createWorkspace } from 'create-nx-workspace';
-import * as fs from 'fs';
+import * as fs from 'fs-extra';
 import * as ora from 'ora';
 import * as path from 'path';
 import yargs from 'yargs';
 
 // TODO: validation on version to requires correct semver (x.x.x)
-const DEFAULT_NODE_VERSION = '20.13.0';
+const DEFAULT_NODE_VERSION = '20.16.0';
 const DEFAULT_PACKAGE_MANAGER = 'pnpm';
 
 async function installDependencies(
@@ -55,6 +55,7 @@ async function installDependencies(
     spinner.succeed(`Successfully executed '${message}'`);
   } catch (e) {
     spinner.fail(`Failed to execute '${message}'`);
+    throw e;
   } finally {
     spinner.stop();
   }
@@ -90,6 +91,8 @@ async function main() {
 
   const { name, nodeVersion, packageManager } = argv;
 
+  // TODO: Ensure we have the correct node version & package manager
+
   // TODO: Accept preset package name and version from clo param
   // This will enable the support of new Mesh repos, PWA repos etc. as a command line tool.
   // This assumes "nx-serverless", "create-nx-serverless" & "nx-serverless-pipeline" packages are at the same version
@@ -119,14 +122,9 @@ async function main() {
 
     ora(`Successfully created workspace at: ${directory}`).succeed();
   } catch (e) {
-    console.error(e);
-
     const dirPath = path.join(process.cwd(), name);
 
-    if (fs.existsSync(dirPath)) {
-      console.warn(`Removing newly created folder: ${dirPath}`);
-      fs.rmdirSync(dirPath);
-    }
+    fs.rmSync(dirPath, { recursive: true, force: true });
 
     console.error('Failed to create workspace');
   }
