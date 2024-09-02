@@ -2,7 +2,7 @@
   "name": "@aligent/nx-serverless",
   "version": "0.0.1",
   "dependencies": {
-    "@nx/devkit": "19.4.2",
+    "@nx/devkit": "19.6.4",
     "latest-version": "^5.1.0",
     "ora": "^5.4.1",
     "tslib": "^2.6.2"
