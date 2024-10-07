@@ -2,7 +2,7 @@
   "name": "@aligent/create-nx-serverless",
   "version": "0.0.1",
   "dependencies": {
-    "create-nx-workspace": "19.3.1",
+    "create-nx-workspace": "20.0.0",
     "ora": "^5.4.1",
     "tslib": "^2.6.2",
     "yargs": "^17.7.2"
